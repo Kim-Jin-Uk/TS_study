@@ -5,7 +5,7 @@ import InviteWorkspaceModal from '@components/InviteWorkspaceModal';
 import Menu from '@components/Menu';
 import Modal from '@components/Modal';
 import useInput from '@hooks/useInput';
-// import useSocket from '@hooks/useSocket';
+import useSocket from '@hooks/useSocket';
 import Channel from '@pages/Channel';
 import DirectMessage from '@pages/DirectMessage';
 import { Button, Input, Label } from '@pages/SignUp/styles';
@@ -41,7 +41,7 @@ const Workspace = () => {
   const params = useParams<{ workspace?: string }>();
   // console.log('params', params, 'location', location, 'routeMatch', routeMatch, 'history', history);
   const { workspace } = params;
-  // const [socket, disconnectSocket] = useSocket(workspace);
+  const [socket, disconnectSocket] = useSocket(workspace);
   const { data: userData, mutate: revalidateUser } = useSWR<IUser | false>('/api/users', fetcher);
   const { data: channelData } = useSWR<IChannel[]>(userData ? `/api/workspaces/${workspace}/channels` : null, fetcher);
   const [showCreateWorkspaceModal, setShowCreateWorkspaceModal] = useState(false);
@@ -125,18 +125,18 @@ const Workspace = () => {
     setShowWorkspaceModal((prev) => !prev);
   }, []);
 
-  // useEffect(() => {
-  //   return () => {
-  //     console.info('disconnect socket', workspace);
-  //     disconnectSocket();
-  //   };
-  // }, [disconnectSocket, workspace]);
-  // useEffect(() => {
-  //   if (channelData && userData) {
-  //     console.info('로그인하자', socket);
-  //     socket?.emit('login', { id: userData?.id, channels: channelData.map((v) => v.id) });
-  //   }
-  // }, [socket, userData, channelData]);
+  useEffect(() => {
+    return () => {
+      console.info('disconnect socket', workspace);
+      disconnectSocket();
+    };
+  }, [disconnectSocket, workspace]);
+  useEffect(() => {
+    if (channelData && userData) {
+      console.info('로그인하자', socket);
+      socket?.emit('login', { id: userData?.id, channels: channelData.map((v) => v.id) });
+    }
+  }, [socket, userData, channelData]);
 
   if (userData === false){
     return <Redirect to="/login" />
