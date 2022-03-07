@@ -1,3 +1,6 @@
 /sleact/back/.env
 /sleact/back/node_modules/
 /sleact/alecture/node_modules/
+/sleact/a-nest/.env
+/sleact/a-nest/node_modules/
+/sleact/a-nest/dist/
