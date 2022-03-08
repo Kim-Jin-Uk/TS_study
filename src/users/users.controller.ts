@@ -1,9 +1,20 @@
-import { Body, Controller, Get, Post, Req, Res } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Req,
+  Res,
+  UseInterceptors,
+} from '@nestjs/common';
 import { JoinRequestDto } from './dto/join.request.dto';
 import { UsersService } from './users.service';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
-import { UserDto } from '../global/dto/user.dto';
+import { UserDto } from '../global/dtos/user.dto';
+import { User } from '../global/decorators/user.decorator';
+import { UndefinedToNullInterceptor } from '../global/interceptors/undefinedToNull.interceptor';
 
+@UseInterceptors(UndefinedToNullInterceptor)
 @Controller('api/users')
 export class UsersController {
   constructor(private usersService: UsersService) {}
@@ -12,8 +23,8 @@ export class UsersController {
   })
   @ApiOperation({ summary: '내 정보 조회' })
   @Get()
-  getUsers(@Req() req) {
-    return req.user;
+  getUsers(@User() user) {
+    return user;
   }
 
   @ApiOperation({ summary: '회원가입' })
@@ -29,8 +40,8 @@ export class UsersController {
   })
   @ApiOperation({ summary: '로그인' })
   @Post('login')
-  logIn(@Req() req) {
-    return req.user;
+  logIn(@User() user) {
+    return user;
   }
 
   @ApiOperation({ summary: '로그아웃' })
